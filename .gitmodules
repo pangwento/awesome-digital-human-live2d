@@ -1,0 +1,3 @@
+[submodule "web/grandiose"]
+	path = web/grandiose
+	url = https://github.com/Streampunk/grandiose.git
