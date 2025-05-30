@@ -1,3 +1,25 @@
+# AWESOME-DIGITAL-HUMAN with grandiose
+## grandiose接入到项目
+```bash
+# 项目目录结构
+├── awesome-digital-human-live2d/  # 项目根目录
+│   ├── web/                       # Next.js项目目录
+│   │   ├── package.json
+│   │   └── tsconfig.json
+        └── grandiose/   
+```
+### grandiose初始化
+* 克隆项目并初始化grandiose子模块
+```bash
+git clone --recurse-submodules https://github.com/pangwento/awesome-digital-human-live2d.git 
+```
+* 安装grandiose依赖
+```bash
+cd web/grandiose
+npm install
+```
+
+---
 # AWESOME-DIGITAL-HUMAN
 **打造一个有温度的数字人**  
 **给数字人注入灵魂**  
