@@ -1,25 +1,20 @@
 import { LAppPal } from './lapppal';
 import { canvas, gl, frameBuffer } from './lappdelegate';
-
+import grandiose from 'grandiose';
 
 export class LAppFrameSender {
-    private ws: WebSocket | null = null;
     private isSending = false;
+    private sender : grandiose.Sender | null = null;
 
     public initialize(): void {
-        this.ws = new WebSocket('ws://localhost:8080');
-        this.setupWebSocket();
+        this.sender = grandiose.send({
+            name: 'awesome-digital-human-live2d',
+            groups: null,
+            clockVideo: true,
+            clockAudio: false,
+        })
     }
-    private setupWebSocket() {
-        if (this.ws) {
-            this.ws.onopen = () => {
-                this.isSending = true;
-            };
-            this.ws.onclose = () => {
-                this.isSending = false;
-            }
-        }
-    }
+    
     sendFrame() {
         if (!this.isSending) {
             return;
@@ -27,7 +22,7 @@ export class LAppFrameSender {
         this.sendFrameData();
     }
     sendFrameData() {
-        if (this.isSending && this.ws && this.ws.readyState === WebSocket.OPEN && gl && canvas) {
+        if (this.isSending && gl && canvas) {
             gl.finish();
 
 
@@ -40,13 +35,24 @@ export class LAppFrameSender {
             const packet = new Uint8Array(8 + rawBuffer.length);
             packet.set(new Uint8Array(header.buffer), 0);
             packet.set(rawBuffer, 8);
-            this.ws.send(packet.buffer);
+
+            this.sender?.video({
+                type: 'video',
+                xres: width,
+                yres: height,
+                frameRateN: 60,
+                frameRateD: 1,
+                fourCC: 1095911234, // BGRA
+                pictureAspectRatio: width / height,
+                timestamp: [0, 0],
+                frameFormatType: 1, // 使用 FrameType 枚举
+                timecode: [0, 0],
+                lineStrideBytes: width * 4,
+                data: packet.buffer,
+            })
         }
     }
     destroy() {
         this.isSending = false;
-        if (this.ws) {
-            this.ws.close();
-        }
     }
 }

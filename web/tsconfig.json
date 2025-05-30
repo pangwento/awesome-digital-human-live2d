@@ -21,7 +21,8 @@
     "paths": {
       "@/*": ["./*"],
       "@live2dFramework/*": ["./app/lib/live2d/Framework/src/*"],
-      "@live2dCore/*": ["./app/lib/live2d/Core/*"]
+      "@live2dCore/*": ["./app/lib/live2d/Core/*"],
+      "grandiose":["./grandiose"]
 
     }
   },
