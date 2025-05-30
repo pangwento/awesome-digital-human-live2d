@@ -11,6 +11,7 @@ import { LAppLive2DManager } from './lapplive2dmanager';
 import { LAppPal } from './lapppal';
 import { LAppTextureManager } from './lapptexturemanager';
 import { LAppView } from './lappview';
+import { LAppFrameSender } from './lappframesender';
 
 export let canvas: HTMLCanvasElement = null;
 export let s_instance: LAppDelegate = null;
@@ -69,7 +70,7 @@ export class LAppDelegate {
 
     // 初始化gl上下文
     // @ts-ignore
-    gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    gl = canvas.getContext('webgl',{ alpha: true }) || canvas.getContext('experimental-webgl',{ alpha: true });
 
     if (!gl) {
       alert('Cannot initialize WebGL. This browser does not support.');
@@ -86,6 +87,9 @@ export class LAppDelegate {
       frameBuffer = gl.getParameter(gl.FRAMEBUFFER_BINDING);
     }
 
+    if(this._frameSender) {
+      this._frameSender.initialize();
+    }
     // 透明设置
     // 启动融合设置,根据透明度的alpha来混合背景和前景的像素,透明度越高背景就越明显
     gl.enable(gl.BLEND);
@@ -182,6 +186,9 @@ export class LAppDelegate {
       // 画面更新
       this._view.render();
 
+      // 发送视频帧
+      this._frameSender.sendFrame();
+
       // 循环的递归调用
       requestAnimationFrame(loop);
     };
@@ -273,6 +280,7 @@ export class LAppDelegate {
     this._cubismOption = new Option();
     this._view = new LAppView();
     this._textureManager = new LAppTextureManager();
+    this._frameSender = new LAppFrameSender();
     this._initialized = false;
   }
 
@@ -363,6 +371,7 @@ export class LAppDelegate {
   _isEnd: boolean; // APP是否结束
   _textureManager: LAppTextureManager; //纹理管理器
   _live2dManager: LAppLive2DManager; // Live2D管理器
+  _frameSender: LAppFrameSender; // 视频帧发送器
   _initialized: boolean; // 是否初始化
 }
 
